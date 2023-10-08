@@ -8,6 +8,7 @@ function App() {
       <h1 className='mx-auto text-center text-3xl text-red-600 border mb-7'>
         Gestion de Procesos
       </h1>
+      
       <ProcessForm />
     </div>
   )
