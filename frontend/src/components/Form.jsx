@@ -1,5 +1,5 @@
 // ProcessForm.js
-
+import axios from 'axios'
 import React, { useState } from 'react';
 
 function ProcessForm() {
@@ -14,12 +14,35 @@ function ProcessForm() {
     });
 
     // Function to handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Add the current form data to the list of processes
         setProcesses([...processes, formData]);
         // Clear the form
         setFormData({ name: '', cpu_time: '', arrival: '', priority: '' });
+        // Send the processes data to the API
+        try {
+            // const dataArray = [
+            //     { name: "Process 1", cpu_time: 10, arrival: 5, priority: 2 },
+            //     { name: "Process 2", cpu_time: 8, arrival: 3, priority: 1 },
+            //     // Add more data objects as needed
+            // ];
+            await axios.post('http://localhost:8000/api/process', processes, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(res => {
+                    console.log(res.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+            // Handle successful API response
+        } catch (error) {
+            // Handle API error
+            console.error('Error:', error);
+        }
     };
 
     // Function to handle input changes
@@ -65,7 +88,8 @@ function ProcessForm() {
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
                     />
                 </div>
-                <button className='bg-green-600 border border-green-600 hover:bg-green-600 text-white rounded'  type="submit">Add Process</button>
+                <button className='p-2 bg-green-600 border border-green-600 hover:bg-green-700 text-white rounded me-2' type="submit">Add Process</button>
+                {/* <button className='p-2 bg-green-600 border border-green-600 hover:bg-green-700 text-white rounded' type="submit">Add Process</button> */}
             </form>
             <table>
                 <thead>

@@ -1,6 +1,8 @@
-from fastapi import FastAPI
-from Process import Process
+from fastapi import FastAPI, HTTPException
+from Process import ProcessItem
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import ValidationError
 
 processArr = [
     {
@@ -29,6 +31,16 @@ processArr = [
 
 app = FastAPI()
 
+origins = [ 'http://localhost:5173' ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = True,
+    allow_methods = ['*'],
+    allow_headers = ['*']
+)
+
 
 @app.get('/')
 def read_root():
@@ -39,12 +51,15 @@ def read_root():
 def get_all_process():
     response = []
     for process in processArr:
-        response.append(Process(**process))
+        response.append(ProcessItem(**process))
 
     return response
 
-@app.post('/api/process', response_model=str)
-def create_process_array(pList: List[Process]):
-    response = pList
-        
-    return f'success {response}'
+@app.post('/api/process')
+def create_process_array(pList: List[ProcessItem]):
+    try:
+        print(pList)
+        response = pList
+        return f'success, data:{response}'
+    except ValidationError as e:
+        raise HTTPException(status_code=422, detail=str(e))
