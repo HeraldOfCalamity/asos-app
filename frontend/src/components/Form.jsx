@@ -31,14 +31,15 @@ function ProcessForm() {
     return (
         <div className=''>
             <form onSubmit={handleSubmit}>
-                <div className="mb-2">
+                <div className="w-10/12 my-5 grid grid-cols-2  gap-4 md:grid-cols-4 m-auto">
                     <input
                         type="text"
                         name="name"
                         placeholder="Name"
                         value={formData.name}
                         onChange={handleChange}
-                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
+                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
+                        required
                     />
                     <input
                         type="text"
@@ -46,7 +47,8 @@ function ProcessForm() {
                         placeholder="CPU"
                         value={formData.cpu_time}
                         onChange={handleChange}
-                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
+                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
+                        required
                     />
                     <input
                         type="text"
@@ -54,7 +56,7 @@ function ProcessForm() {
                         placeholder="Arrival"
                         value={formData.arrival}
                         onChange={handleChange}
-                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
+                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
                     />
                     <input
                         type="text"
@@ -62,31 +64,38 @@ function ProcessForm() {
                         placeholder="Priority"
                         value={formData.priority}
                         onChange={handleChange}
-                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
+                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
                     />
                 </div>
-                <button className='bg-green-600 border border-green-600 hover:bg-green-600 text-white rounded'  type="submit">Add Process</button>
+
+                <div className="flex justify-center items-center h-full m-3">
+                    <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded mx-auto p-1' type="submit">Add Process</button>
+                </div>
+
+
             </form>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>CPU</th>
-                        <th>Arrival</th>
-                        <th>Priority</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {processes.map((process, index) => (
-                        <tr key={index}>
-                            <td>{process.name}</td>
-                            <td>{process.cpu_time}</td>
-                            <td>{process.arrival}</td>
-                            <td>{process.priority}</td>
+            <div className="w-10/12 border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900 m-auto">
+                <table className="w-full text-sm text-center text-gray-500 dark:text-gray-400" >
+                    <thead className="text-base bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th className="py-3">Name</th>
+                            <th>CPU</th>
+                            <th>Arrival</th>
+                            <th>Priority</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="font-medium text-base divide-y divide-gray-200 dark:divide-gray-700">
+                        {processes.map((process, index) => (
+                            <tr key={index}>
+                                <td className="py-3">{process.name}</td>
+                                <td>{process.cpu_time}</td>
+                                <td>{process.arrival}</td>
+                                <td>{process.priority}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
