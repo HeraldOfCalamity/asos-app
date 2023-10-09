@@ -4,30 +4,6 @@ from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
-processArr = [
-    {
-        'name':'A',
-        'cpu_time':3,
-        'arrival':0
-    },
-    {
-        'name':'B',
-        'cpu_time':4,
-        'arrival':0
-    },
-    {
-        'name':'C',
-        'cpu_time':2,
-        'arrival':0
-    },
-    {
-        'name':'D',
-        'cpu_time':6,
-        'arrival':0,
-        'priority':1
-    }
-]
-
 
 app = FastAPI()
 
@@ -58,7 +34,7 @@ def get_all_process():
 @app.post('/api/process')
 def create_process_array(pList: List[ProcessItem]):
     try:
-        print(pList)
+        print(f'request: {pList}')
         response = pList
         return f'success, data:{response}'
     except ValidationError as e:

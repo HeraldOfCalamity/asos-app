@@ -13,13 +13,36 @@ function ProcessForm() {
         priority: '',
     });
 
-    // Function to handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Add the current form data to the list of processes
+    const addProcess = () => {
+        if (
+            formData.name.trim() === '' ||
+            formData.cpu_time.trim() === '' ||
+            formData.arrival.trim() === '' ||
+            formData.priority.trim() === ''
+        ){
+            // if (formData.priority.trim() === '') setFormData({...formData, priority:''})
+            console.error('Fields name, cpu_time and arrival cannot be blank');
+            return;
+        }
+
+        // Add the current form data to the list of processes        
         setProcesses([...processes, formData]);
         // Clear the form
         setFormData({ name: '', cpu_time: '', arrival: '', priority: '' });
+    }
+
+    const deleteProcess = () => {
+        const updatedProcesses = processes.slice(0, -1);
+        setProcesses(updatedProcesses)
+    }
+    // Function to handle form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // minimum one elemento must be entered
+        if (processes.length == 0)
+            console.error('Why are you trying to send an empty form ? xd')
+            return
+        
         // Send the processes data to the API
         try {
             // const dataArray = [
@@ -53,8 +76,8 @@ function ProcessForm() {
 
     return (
         <div className=''>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-2">
+            <form className='mx-3' onSubmit={handleSubmit}>
+                <div className="mb-4">
                     <input
                         type="text"
                         name="name"
@@ -88,8 +111,11 @@ function ProcessForm() {
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400'
                     />
                 </div>
-                <button className='p-2 bg-green-600 border border-green-600 hover:bg-green-700 text-white rounded me-2' type="submit">Add Process</button>
-                {/* <button className='p-2 bg-green-600 border border-green-600 hover:bg-green-700 text-white rounded' type="submit">Add Process</button> */}
+                <div className=''>
+                    <button className='p-2 bg-green-600 border border-green-800 hover:bg-green-700 text-white rounded me-2' type="button" onClick={addProcess}>Add Process</button>
+                    <button className='p-2 bg-red-600 border border-red-800 hover:bg-red-700 text-white rounded me-2' type='button' onClick={deleteProcess}>Delete Process</button>
+                    <button className='p-2 bg-indigo-600 border border-indigo-800 hover:bg-indigo-700 text-white rounded' type='submit'>Begin processing</button>
+                </div>              
             </form>
             <table>
                 <thead>
