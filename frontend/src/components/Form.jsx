@@ -96,6 +96,9 @@ function ProcessForm() {
                     </tbody>
                 </table>
             </div>
+            {processes.length != 0 && <div className="flex justify-center items-center h-full m-3">
+                <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded mx-auto p-2' type="submit">Generar Diagrama</button>
+            </div>}
         </div>
     );
 }
