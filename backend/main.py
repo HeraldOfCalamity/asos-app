@@ -26,9 +26,9 @@ def read_root():
 @app.get('/api/process')
 def get_all_process():
     data = [
-        ProcessItem(**{'name':'A','cpu_time':4,'arrival':0}),
-        ProcessItem(**{'name':'B','cpu_time':3,'arrival':2}),
-        ProcessItem(**{'name':'C','cpu_time':2,'arrival':2}),
+        ProcessItem(**{'name':'A','cpu_time':4,'arrival':0, 'priority':0}),
+        ProcessItem(**{'name':'B','cpu_time':3,'arrival':2, 'priority':3}),
+        ProcessItem(**{'name':'C','cpu_time':2,'arrival':2, 'priority':2}),
     ]
 
     # data = []
@@ -36,7 +36,7 @@ def get_all_process():
     #     data.append(ProcessItem(**item))
 
     
-    sol = ProcessManagement(data, 'FCFS')
+    sol = ProcessManagement(data, 'PRIO')
     a = sol.generateGantt()
     print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
     # print(a)
