@@ -28,7 +28,7 @@ def get_all_process():
     data = [
         ProcessItem(**{'name':'A','cpu_time':4,'arrival':0}),
         ProcessItem(**{'name':'B','cpu_time':3,'arrival':1}),
-        ProcessItem(**{'name':'C','cpu_time':7,'arrival':2}),
+        ProcessItem(**{'name':'C','cpu_time':2,'arrival':2}),
     ]
 
     # data = []
@@ -38,7 +38,8 @@ def get_all_process():
     
     sol = ProcessManagement(data, 'FCFS')
     a = sol.generateGantt()
-    print(a)
+    print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
+    # print(a)
     
     # print(sol.data)
     return a

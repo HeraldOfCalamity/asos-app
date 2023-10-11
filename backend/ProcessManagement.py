@@ -1,12 +1,15 @@
 from Process import ProcessItem
 from typing import List
 from Process import ProcessItem
+import copy
 
 class ProcessManagement:
     def __init__(self, data: List[ProcessItem], method: str) -> None:
         self.data = data
         self.method = method
         self.wait = []
+        self.currentProcess = ('0', 0)
+
     
     def generateGantt(self, method: str = None) -> list:
         solution = None
@@ -39,33 +42,62 @@ class ProcessManagement:
         ]
         pass
     
+    def proToWait(self, index: int,):
+        for process in self.data:
+            # print(f'process: {process.name}, arrival: {process.arrival}, index: {index}')
+            if process.arrival == index:
+                # print(f'process: {process.name} appened to queue at time: {index}')
+                self.wait.append((process.name, process.remaining_time))
+        
+                
+    
+
+
     def FCFS(self, ctxt: int = 0) -> list:   # First Come First Serve
         df = []
         time = 0
 
-        for process in self.data:
-                if process.arrival == time:
-                    self.wait.append(process)
+        while True:
+            print(f'<=========================>\n - Time: {time} -')
+            col = []
 
-        # while True:
+            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
+                self.currentProcess = self.wait.pop(0)
+            elif self.currentProcess[1] > 1:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
+
+
+            self.proToWait(time)
+
+            print(f'currentProcess: {self.currentProcess}')
+  
+            currentWait = copy.deepcopy(self.wait)
             
-            
+            # Excecution Zone
+            if currentWait:
+                print(f'currentWait: {currentWait}')
+            else:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 10)
+    
 
-        #     break
-            
+            col.append(self.currentProcess)
 
-        # while process.remaining_time > 0:
-        #     if int(process.arrival) == time:
-        #     # print(df)
-        #         ex = (process.name, process.remaining_time)
-        #         process.remaining_time -= 1    
-        #     else:
-        #         ex = ('0', 0)
 
-        #     df.append(ex)
-        #     time += 1
+            # Wait queue Zone
+            col.append(currentWait)
 
-        return self.wait
+            # Column appending Zone
+            df.append(col)
+            # print(f'wait at time: {time} -> {self.wait}')
+            # print(f'df at time: {time} -> {df}')
+            print('<=========================>')
+            time += 1
+
+
+            if self.currentProcess[1] < 0:
+                break
+
+        return df
 
     def Priority(self, ctxt: int = 0):
         pass
