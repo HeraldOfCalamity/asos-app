@@ -26,9 +26,11 @@ def read_root():
 @app.get('/api/process')
 def get_all_process():
     data = [
-        ProcessItem(**{'name':'A','cpu_time':4,'arrival':0, 'priority':0}),
-        ProcessItem(**{'name':'B','cpu_time':3,'arrival':2, 'priority':3}),
-        ProcessItem(**{'name':'C','cpu_time':2,'arrival':2, 'priority':2}),
+        ProcessItem(**{'name':'A','cpu_time':10,'arrival':8, 'priority':9}),
+        ProcessItem(**{'name':'B','cpu_time':1,'arrival':5, 'priority':2}),
+        ProcessItem(**{'name':'C','cpu_time':6,'arrival':4, 'priority':5}),
+        ProcessItem(**{'name':'D','cpu_time':7,'arrival':12, 'priority':3}),
+        ProcessItem(**{'name':'E','cpu_time':12,'arrival':25, 'priority':1}),
     ]
 
     # data = []
@@ -36,7 +38,7 @@ def get_all_process():
     #     data.append(ProcessItem(**item))
 
     
-    sol = ProcessManagement(data, 'SJF')
+    sol = ProcessManagement(data, 'SRT')
     a = sol.generateGantt()
     print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
     # print(a)

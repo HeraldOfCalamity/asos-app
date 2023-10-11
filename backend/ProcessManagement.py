@@ -216,5 +216,71 @@ class ProcessManagement:
         return df
 
     def SRT(self, ctxt: int = 0):  # Shortest Remaining Time
-        pass
+        df = []
+        time = 0
+        end = False
+
+        while True:
+            print(f'<=========================>\n - Time: {time} -')
+            col = []
+
+            self.proToWait(time)
+            currentWait = copy.deepcopy(self.wait)
+
+            
+
+
+            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
+                self.currentProcess = self.wait.pop(0)
+            elif self.currentProcess[1] > 1:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
+
+            
+
+            # if currentWait and currentWait[0][1] < self.currentProcess[1]:
+            #     print(f'En espera: {currentWait[0][1]}, currentProcess: {self.currentProcess[1]}, time: {time}')
+            #     aux = self.currentProcess
+            #     self.currentProcess = self.wait.pop(0)
+            #     print(f'aux = {aux}, current: {self.currentProcess}')
+            #     currentWait.append(aux)
+
+            # print(f'currentProcess: {self.currentProcess}')
+  
+            
+            # Excecution Zone
+            print(f'currentWait: {currentWait}')
+            if currentWait:
+                end = False
+                print(f'currentWait: {currentWait}')
+            else:
+                print('============== ending ==============')
+                end = True
+    
+
+
+
+
+            col.append(self.currentProcess)
+            if currentWait and col[0] == currentWait[0]:
+                currentWait.pop()
+            # Wait queue Zone
+            col.append(currentWait)
+
+
+            
+
+            # Column appending Zone
+            df.append(col)
+            print('<=========================>')
+            time += 1
+
+
+
+
+
+            
+            if self.currentProcess[1] == 1 and end:
+                break
+            
+        return df
 
