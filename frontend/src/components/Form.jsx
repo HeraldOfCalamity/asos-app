@@ -144,7 +144,14 @@ function ProcessForm() {
                     </table>
                 </div>
                 {processes.length != 0 && <div className="flex justify-center items-center h-full m-3">
-                    <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded mx-auto p-2' type="submit">Generar Diagrama</button>
+                    <select className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5' name="select">
+                        <option value="FCFS" selected>FCFS</option>
+                        <option value="RR" >RR</option>
+                        <option value="PRIORIDAD" >PRIORIDAD</option>
+                        <option value="SJF" >SJF</option>
+                        <option value="SRT" >SRT</option>
+                    </select>
+                    <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded m-3 p-2' type="submit">Generar Diagrama</button>
                 </div>}
             </form>
         </div>
