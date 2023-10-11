@@ -34,12 +34,6 @@ class ProcessManagement:
 
 
     def RoudRobin(self, quantum: int = 1, ctxt: int = 1):
-        df = [
-            ('A', 'remaining_time'), """en ejecucion"""
-            ('xd xdxd'),  """ en espera """
-            ('xd xdxd'),
-            ('xd xdxd')
-        ]
         pass
     
     def proToWait(self, index: int,):
@@ -56,7 +50,8 @@ class ProcessManagement:
     def FCFS(self, ctxt: int = 0) -> list:   # First Come First Serve
         df = []
         time = 0
-
+        end = False
+        
         while True:
             print(f'<=========================>\n - Time: {time} -')
             col = []
@@ -77,7 +72,8 @@ class ProcessManagement:
             if currentWait:
                 print(f'currentWait: {currentWait}')
             else:
-                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 10)
+                end = True
+                # self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 2)
     
 
             col.append(self.currentProcess)
@@ -94,9 +90,9 @@ class ProcessManagement:
             time += 1
 
 
-            if self.currentProcess[1] < 0:
+            if self.currentProcess[1] == 1 and end:
                 break
-
+            
         return df
 
     def Priority(self, ctxt: int = 0):
