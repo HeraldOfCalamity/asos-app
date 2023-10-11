@@ -1,6 +1,7 @@
 from Process import ProcessItem
 from typing import List
 from Process import ProcessItem
+import copy
 import pandas as pd
 
 class ProcessManagement:
@@ -30,7 +31,7 @@ class ProcessManagement:
         elif self.method == 'SRT':
             solution = self.SRT()
         
-        return self.to_DataFrame(solution)
+        return self.toDataFrame(solution)
         
 
 
@@ -100,7 +101,52 @@ class ProcessManagement:
         pass
 
     def SJF(self, ctxt: int = 0):  # Shortest Job First
-        pass
+        df = []
+        time = 0
+        end = False
+        
+        while True:
+            print(f'<=========================>\n - Time: {time} -')
+            col = []
+
+            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
+                self.currentProcess = self.wait.pop(0)
+            elif self.currentProcess[1] > 1:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
+
+
+            self.proToWait(time)
+
+            print(f'currentProcess: {self.currentProcess}')
+  
+            currentWait = copy.deepcopy(self.wait)
+            
+            # Excecution Zone
+            if currentWait:
+                print(f'currentWait: {currentWait}')
+            else:
+                end = True
+                # self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 2)
+    
+
+            col.append(self.currentProcess)
+
+
+            # Wait queue Zone
+            col.append(currentWait)
+
+            # Column appending Zone
+            df.append(col)
+            # print(f'wait at time: {time} -> {self.wait}')
+            # print(f'df at time: {time} -> {df}')
+            print('<=========================>')
+            time += 1
+
+
+            if self.currentProcess[1] == 1 and end:
+                break
+            
+        return df
 
     def SRT(self, ctxt: int = 0):  # Shortest Remaining Time
         pass
@@ -132,12 +178,13 @@ class ProcessManagement:
         for col in df:
             for fila in df[col]:
                 if not pd.isna(fila):
-                    for process in range(len(self.data)):
-                        if fila[0]==self.data[process]["name"]:
+                    for process in self.data:
+                        if str(fila[0])==process.name:
                             if not str(fila[0]) in time_return:
                                 time_return[fila[0]]=1
                             else:
                                 time_return[fila[0]]+=1
+                                
         time_tuplas=[]               
         for process in time_return:
             time_tuplas.append((process,time_return[process]))

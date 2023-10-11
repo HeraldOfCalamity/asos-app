@@ -37,7 +37,7 @@ def get_all_process():
 
     
     sol = ProcessManagement(data, 'FCFS')
-    a = sol.generateGantt()
+    a = sol.generateGantt('FCFS')
     print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
     # print(a)
     
