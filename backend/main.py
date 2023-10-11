@@ -36,7 +36,7 @@ def get_all_process():
     #     data.append(ProcessItem(**item))
 
     
-    sol = ProcessManagement(data, 'PRIO')
+    sol = ProcessManagement(data, 'SJF')
     a = sol.generateGantt()
     print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
     # print(a)

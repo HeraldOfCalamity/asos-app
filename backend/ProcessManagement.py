@@ -158,8 +158,62 @@ class ProcessManagement:
             
         return df
 
+
+
+    def byCPUTime(self):
+        # Create a key function to sort by CPU time
+        key_function = lambda process: process.cpu_time
+
+        # Sort the data based on CPU time in ascending order
+        sorted_data = sorted(self.data, key=key_function)
+
+        # Create a list of tuples (name, remaining_time)
+        self.wait = [(process.name, process.remaining_time) for process in sorted_data]
+
+
+
     def SJF(self, ctxt: int = 0):  # Shortest Job First
-        pass
+        df = []
+        time = 0
+        end = False
+
+        while True:
+            print(f'<=========================>\n - Time: {time} -')
+            col = []
+
+            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
+                self.currentProcess = self.wait.pop(0)
+            elif self.currentProcess[1] > 1:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
+
+            if time == 0:
+                self.byCPUTime()
+
+            print(f'currentProcess: {self.currentProcess}')
+  
+            currentWait = copy.deepcopy(self.wait)
+            
+            # Excecution Zone
+            if currentWait:
+                print(f'currentWait: {currentWait}')
+            else:
+                end = True
+    
+
+            col.append(self.currentProcess)
+            # Wait queue Zone
+            col.append(currentWait)
+
+            # Column appending Zone
+            df.append(col)
+            print('<=========================>')
+            time += 1
+
+
+            if self.currentProcess[1] == 1 and end:
+                break
+            
+        return df
 
     def SRT(self, ctxt: int = 0):  # Shortest Remaining Time
         pass
