@@ -31,6 +31,24 @@ function ProcessForm() {
         setFormData({ name: '', cpu_time: '', arrival: '', priority: '' });
     }
 
+    const getGantt = async () => {
+        
+        try{
+            
+            await axios.get('http://localhost:8000/api/process')
+                .then(res => {
+                    console.log('============ Response form GET ===============');
+                    console.log(res.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+        
+    }
+
     const deleteProcess = () => {
         const updatedProcesses = processes.slice(0, -1);
         setProcesses(updatedProcesses)
@@ -40,8 +58,8 @@ function ProcessForm() {
         e.preventDefault();
         // minimum one elemento must be entered
         if (processes.length == 0)
-            console.error('Why are you trying to send an empty form ? xd')
-            return
+            {console.error('Why are you trying to send an empty form ? xd')
+            return}
         
         // Send the processes data to the API
         try {
@@ -57,6 +75,8 @@ function ProcessForm() {
                 })
                 .then(res => {
                     console.log(res.data);
+                    console.log('Todo bien con el POST')
+                    getGantt()
                 })
                 .catch(error => {
                     console.log(error);
