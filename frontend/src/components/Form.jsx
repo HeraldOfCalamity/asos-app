@@ -19,7 +19,7 @@ function ProcessForm() {
             formData.cpu_time.trim() === '' ||
             formData.arrival.trim() === '' ||
             formData.priority.trim() === ''
-        ){
+        ) {
             // if (formData.priority.trim() === '') setFormData({...formData, priority:''})
             console.error('Fields name, cpu_time and arrival cannot be blank');
             return;
@@ -41,8 +41,8 @@ function ProcessForm() {
         // minimum one elemento must be entered
         if (processes.length == 0)
             console.error('Why are you trying to send an empty form ? xd')
-            return
-        
+        return
+
         // Send the processes data to the API
         try {
             // const dataArray = [
@@ -51,10 +51,10 @@ function ProcessForm() {
             //     // Add more data objects as needed
             // ];
             await axios.post('http://localhost:8000/api/process', processes, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
                 .then(res => {
                     console.log(res.data);
                 })
@@ -85,7 +85,7 @@ function ProcessForm() {
                         value={formData.name}
                         onChange={handleChange}
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
-                        required
+
                     />
                     <input
                         type="number"
@@ -95,7 +95,7 @@ function ProcessForm() {
                         value={formData.cpu_time}
                         onChange={handleChange}
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
-                        required
+
                     />
                     <input
                         type="number"
@@ -116,37 +116,37 @@ function ProcessForm() {
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
                     />
                 </div>
-                <div className=''>
+                <div className="flex justify-center items-center h-full m-3">
                     <button className='p-2 bg-green-600 border border-green-800 hover:bg-green-700 text-white rounded me-2' type="button" onClick={addProcess}>Add Process</button>
                     <button className='p-2 bg-red-600 border border-red-800 hover:bg-red-700 text-white rounded me-2' type='button' onClick={deleteProcess}>Delete Process</button>
-                    <button className='p-2 bg-indigo-600 border border-indigo-800 hover:bg-indigo-700 text-white rounded' type='submit'>Begin processing</button>
-                </div>              
-            </form>
-            <div className="w-10/12 border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900 m-auto">
-                <table className="w-full text-sm text-center text-gray-500 dark:text-gray-400" >
-                    <thead className="text-base bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th className="py-3">Name</th>
-                            <th>CPU</th>
-                            <th>Arrival</th>
-                            <th>Priority</th>
-                        </tr>
-                    </thead>
-                    <tbody className="font-medium text-base divide-y divide-gray-200 dark:divide-gray-700">
-                        {processes.map((process, index) => (
-                            <tr key={index}>
-                                <td className="py-3">{process.name}</td>
-                                <td>{process.cpu_time}</td>
-                                <td>{process.arrival}</td>
-                                <td>{process.priority}</td>
+                </div>
+
+                <div className="w-10/12 border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900 m-auto">
+                    <table className="w-full text-sm text-center text-gray-500 dark:text-gray-400" >
+                        <thead className="text-base bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th className="py-3">Name</th>
+                                <th>CPU</th>
+                                <th>Arrival</th>
+                                <th>Priority</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {processes.length != 0 && <div className="flex justify-center items-center h-full m-3">
-                <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded mx-auto p-2' type="submit">Generar Diagrama</button>
-            </div>}
+                        </thead>
+                        <tbody className="font-medium text-base divide-y divide-gray-200 dark:divide-gray-700">
+                            {processes.map((process, index) => (
+                                <tr key={index}>
+                                    <td className="py-3">{process.name}</td>
+                                    <td>{process.cpu_time}</td>
+                                    <td>{process.arrival}</td>
+                                    <td>{process.priority}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {processes.length != 0 && <div className="flex justify-center items-center h-full m-3">
+                    <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded mx-auto p-2' type="submit">Generar Diagrama</button>
+                </div>}
+            </form>
         </div>
     );
 }
