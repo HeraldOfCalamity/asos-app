@@ -16,6 +16,7 @@ function ProcessForm() {
     // Function to handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
+        if(formData["arrival"]==='1'){setFormData({ ...formData, ["arrival"]:'0' })}
         // Add the current form data to the list of processes
         setProcesses([...processes, formData]);
         // Clear the form
@@ -42,7 +43,8 @@ function ProcessForm() {
                         required
                     />
                     <input
-                        type="text"
+                        type="number"
+                        min={0}
                         name="cpu_time"
                         placeholder="CPU"
                         value={formData.cpu_time}
@@ -51,7 +53,8 @@ function ProcessForm() {
                         required
                     />
                     <input
-                        type="text"
+                        type="number"
+                        min={0}
                         name="arrival"
                         placeholder="Arrival"
                         value={formData.arrival}
@@ -59,7 +62,8 @@ function ProcessForm() {
                         className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5'
                     />
                     <input
-                        type="text"
+                        type="number"
+                        min={0}
                         name="priority"
                         placeholder="Priority"
                         value={formData.priority}
