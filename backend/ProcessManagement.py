@@ -9,6 +9,7 @@ class ProcessManagement:
         self.method = method
         self.wait = []
         self.time_df = None
+        self.currentProcess = ('0', 0)
 
     
     def generateGantt(self, method: str = None) -> list:
@@ -34,36 +35,66 @@ class ProcessManagement:
 
 
     def RoudRobin(self, quantum: int = 1, ctxt: int = 1):
-     
         pass
     
+    def proToWait(self, index: int,):
+        for process in self.data:
+            # print(f'process: {process.name}, arrival: {process.arrival}, index: {index}')
+            if process.arrival == index:
+                # print(f'process: {process.name} appened to queue at time: {index}')
+                self.wait.append((process.name, process.remaining_time))
+        
+                
+    
+
+
     def FCFS(self, ctxt: int = 0) -> list:   # First Come First Serve
         df = []
         time = 0
+        end = False
+        
+        while True:
+            print(f'<=========================>\n - Time: {time} -')
+            col = []
 
-        for process in self.data:
-                if process.arrival == time:
-                    self.wait.append(process)
+            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
+                self.currentProcess = self.wait.pop(0)
+            elif self.currentProcess[1] > 1:
+                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
 
-        # while True:
+
+            self.proToWait(time)
+
+            print(f'currentProcess: {self.currentProcess}')
+  
+            currentWait = copy.deepcopy(self.wait)
             
+            # Excecution Zone
+            if currentWait:
+                print(f'currentWait: {currentWait}')
+            else:
+                end = True
+                # self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 2)
+    
+
+            col.append(self.currentProcess)
+
+
+            # Wait queue Zone
+            col.append(currentWait)
+
+            # Column appending Zone
+            df.append(col)
+            # print(f'wait at time: {time} -> {self.wait}')
+            # print(f'df at time: {time} -> {df}')
+            print('<=========================>')
+            time += 1
+
+
+            if self.currentProcess[1] == 1 and end:
+                break
             
-
-        #     break
-            
-
-        # while process.remaining_time > 0:
-        #     if int(process.arrival) == time:
-        #     # print(df)
-        #         ex = (process.name, process.remaining_time)
-        #         process.remaining_time -= 1    
-        #     else:
-        #         ex = ('0', 0)
-
-        #     df.append(ex)
-        #     time += 1
-
-        return self.wait
+        return df
 
     def Priority(self, ctxt: int = 0):
         pass
