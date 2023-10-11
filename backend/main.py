@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from Process import ProcessItem
-from typing import List
+from typing import List, Dict
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 from ProcessManagement import ProcessManagement
+from Data import ProcessData
 
 app = FastAPI()
 
@@ -55,17 +56,46 @@ def get_all_process():
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=str(e))
     
-
+# {
+#     "data": [
+#         {
+#             "name": "A",
+#             "cpu_time": "4",
+#             "arrival": "0",
+#             "priority": "7"
+#         },
+#         {
+#             "name": "B",
+#             "cpu_time": "4",
+#             "arrival": "1",
+#             "priority": "7"
+#         },
+#         {
+#             "name": "C",
+#             "cpu_time": "5",
+#             "arrival": "2",
+#             "priority": "8"
+#         },
+#         {
+#             "name": "D",
+#             "cpu_time": "8",
+#             "arrival": "3",
+#             "priority": "89"
+#         }
+#     ],
+#     "method": "FCFS"
+# }
 @app.post('/api/process')
-def create_process_array(pList: List[ProcessItem]):
+def create_process_array(pList: ProcessData):
     print(f'Incoming data: {pList}')
 
     try:
-        # print(f'request: {pList}')
+        print(f'request: {pList}')
 
-        Gantt.data = pList
-        Gantt.method = 'FCFS'
+        Gantt.data = pList.data
+        Gantt.method = pList.method
         print(f'Gantt data: {Gantt.data}')
         return f'success, data:{pList}'
     except ValidationError as e:
+        print(f'error: {pList}')
         raise HTTPException(status_code=422, detail=str(e))

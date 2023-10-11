@@ -62,13 +62,16 @@ function ProcessForm() {
             return}
         
         // Send the processes data to the API
+        let request = {"data":processes, "method":"FCFS"};
+        console.log(request);
         try {
             // const dataArray = [
             //     { name: "Process 1", cpu_time: 10, arrival: 5, priority: 2 },
             //     { name: "Process 2", cpu_time: 8, arrival: 3, priority: 1 },
             //     // Add more data objects as needed
             // ];
-            await axios.post('http://localhost:8000/api/process', processes, {
+            
+            await axios.post('http://localhost:8000/api/process',request , {
                     headers: {
                         'Content-Type': 'application/json',
                     },
