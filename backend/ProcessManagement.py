@@ -22,12 +22,14 @@ class ProcessManagement:
             solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.arrival})
         elif self.method == 'RR':
             solution = self.RoudRobin()
-        elif self.method == 'PRIO':
-            solution = self.Priority()
+        elif self.method[0:4] == 'PRIO':
+            solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.priority})
         elif self.method == 'SJF':
             solution = self.SJF()
         elif self.method == 'SRT':
             solution = self.SRT()
+        else:
+            solution = [f'-- Error: method {self.method} does not exist --']
         
         return solution
         
@@ -63,7 +65,11 @@ class ProcessManagement:
         waitQueue = []
         time = 0
 
-        self.wait = sorted(self.data, key=method['ord'])
+        if method['name'] == 'PRIO_gt':
+            self.wait = sorted(self.data, key=method['ord'], reverse=True)
+        else:
+            self.wait = sorted(self.data, key=method['ord'])
+
         print(f'\nEspera inicial: { self.wait}\n')
         
         while True:
@@ -71,11 +77,20 @@ class ProcessManagement:
             print(f'Current: {self.currentProcess}')
             column = []
             
-            #setting of the col waitqueue
-            for waiting in self.wait:
-                if waiting.arrival == time:
-                    waitQueue.append(waiting)
-                    self.wait = self.rotateWait()
+            #setting the col wait queue
+            
+            if method['name'] == 'FCFS':
+                for waiting in self.wait:
+                    if waiting.arrival == time:
+                        waitQueue.append(waiting)
+                        self.wait = self.rotateWait()
+
+            elif method['name'][0:4] == 'PRIO':
+                waitQueue = self.wait
+
+
+
+
                     
 
             # Appending of process in excecution
