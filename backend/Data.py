@@ -7,3 +7,5 @@ from Process import ProcessItem
 class ProcessData(BaseModel):
     data: List[ProcessItem]
     method: str
+    ctxt: int = 0
+    quantum: int = 3

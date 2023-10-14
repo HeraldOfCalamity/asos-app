@@ -89,6 +89,9 @@ def create_process_array(pList: ProcessData):
 
         Gantt.data = pList.data
         Gantt.method = pList.method
+        if pList.method == 'RR':
+            Gantt.quantum = pList.quantum
+            Gantt.ctxt = pList.ctxt
         print(f'Gantt data: {Gantt.data}')
         return f'success, data:{pList}'
     except ValidationError as e:
