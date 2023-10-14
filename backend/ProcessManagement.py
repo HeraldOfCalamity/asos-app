@@ -22,10 +22,10 @@ class ProcessManagement:
             solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.arrival})
         elif self.method == 'RR':
             solution = self.RoudRobin()
-        elif self.method[0:4] == 'PRIO':
+        elif self.method == 'PRIO_sm' or self.method == 'PRIO_gt':
             solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.priority})
         elif self.method == 'SJF':
-            solution = self.SJF()
+            solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.cpu_time})
         elif self.method == 'SRT':
             solution = self.SRT()
         else:
@@ -67,8 +67,10 @@ class ProcessManagement:
 
         if method['name'] == 'PRIO_gt':
             self.wait = sorted(self.data, key=method['ord'], reverse=True)
+            print('\n\n====== prio invertida, de mayor a menor ==========\n\n')
         else:
             self.wait = sorted(self.data, key=method['ord'])
+            print('ORODENACION NORMAL')
 
         print(f'\nEspera inicial: { self.wait}\n')
         
@@ -79,13 +81,17 @@ class ProcessManagement:
             
             #setting the col wait queue
             
+            # To set first waiting queue if prio or sjf
+            # if time == 0 and (method['name'][0:4] == 'PRIO' or method['name'] == 'SJF'):
+            #     waitQueue = self.data
+
             if method['name'] == 'FCFS':
                 for waiting in self.wait:
                     if waiting.arrival == time:
                         waitQueue.append(waiting)
                         self.wait = self.rotateWait()
 
-            elif method['name'][0:4] == 'PRIO':
+            elif method['name'][0:4] == 'PRIO' or method['name'] == 'SJF':
                 waitQueue = self.wait
 
 
