@@ -45,6 +45,7 @@ def get_all_process():
     print(f'GET: Gantt data: {Gantt.data}')
     try:
         if Gantt is not None:
+            print('\n==========================   back =======================\n')
             response = Gantt.generateGantt()
         else:
             response = 'Gantt not created'
@@ -60,37 +61,31 @@ def get_all_process():
 #     "data": [
 #         {
 #             "name": "A",
-#             "cpu_time": "4",
+#             "cpu_time": "2",
 #             "arrival": "0",
-#             "priority": "7"
+#             "priority": "2"
 #         },
 #         {
 #             "name": "B",
-#             "cpu_time": "4",
-#             "arrival": "1",
-#             "priority": "7"
+#             "cpu_time": "5",
+#             "arrival": "2",
+#             "priority": "2"
 #         },
 #         {
 #             "name": "C",
-#             "cpu_time": "5",
-#             "arrival": "2",
-#             "priority": "8"
-#         },
-#         {
-#             "name": "D",
-#             "cpu_time": "8",
-#             "arrival": "3",
-#             "priority": "89"
+#             "cpu_time": "4",
+#             "arrival": "1",
+#             "priority": "2"
 #         }
 #     ],
 #     "method": "FCFS"
 # }
 @app.post('/api/process')
 def create_process_array(pList: ProcessData):
-    print(f'Incoming data: {pList}')
+    # print(f'Incoming data: {pList}')
 
     try:
-        print(f'request: {pList}')
+        # print(f'request: {pList}')
 
         Gantt.data = pList.data
         Gantt.method = pList.method

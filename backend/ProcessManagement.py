@@ -7,8 +7,8 @@ class ProcessManagement:
     def __init__(self, data: List[ProcessItem], method: str) -> None:
         self.data = data
         self.method = method
-        self.wait = []
-        self.currentProcess = ('0', 0)
+        self.wait = None
+        self.currentProcess = None  # al finalizar proceso reiniciar
 
     
     def generateGantt(self, method: str = None) -> list:
@@ -19,7 +19,7 @@ class ProcessManagement:
             self.method = method
 
         if self.method == 'FCFS':
-            solution = self.FCFS()
+            solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.arrival})
         elif self.method == 'RR':
             solution = self.RoudRobin()
         elif self.method == 'PRIO':
@@ -31,63 +31,93 @@ class ProcessManagement:
         
         return solution
         
-
-
-    def RoudRobin(self, quantum: int = 1, ctxt: int = 1):
-        pass
-    
-    def proToWait(self, index: int):
-        for process in self.data:
-            # print(f'process: {process.name}, arrival: {process.arrival}, index: {index}')
-            if process.arrival == index:
-                # print(f'process: {process.name} appened to queue at time: {index}')
-                self.wait.append((process.name, process.remaining_time))
-        
                 
-    
+    def checkFinish(self, pro: ProcessItem):
+        if pro.remaining_time == 1:
+            pro.done = True
 
 
-    def FCFS(self, ctxt: int = 0) -> list:   # First Come First Serve
+    def isProcessingDone(self):
+        for process in self.data:
+            if not process.done:
+                return False
+        
+        return True
+
+    def rotateWait(self):
+        if not self.wait:
+            print(f'self.wait value: {self.wait}')
+            return self.wait  # Return an empty list if the input list is empty
+        print(f'Rotacion efectuada')
+        return self.wait[1:] + [self.wait[0]]
+
+    def restart(self):
+        self.currentProcess = None
+        self.wait = None
+        for process in self.data:
+            process.remaining_time = process.cpu_time
+            process.done = False
+
+    def baseAlgorithm(self, method) -> list:   # First Come First Serve
         df = []
+        waitQueue = []
         time = 0
-        end = False
 
+        self.wait = sorted(self.data, key=method['ord'])
+        print(f'\nEspera inicial: { self.wait}\n')
+        
         while True:
-            print(f'<=========================>\n - Time: {time} -')
-            col = []
-
-            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
-                self.currentProcess = self.wait.pop(0)
-            elif self.currentProcess[1] > 1:
-                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
-
-
-            self.proToWait(time)
-
-            print(f'currentProcess: {self.currentProcess}')
-  
-            currentWait = copy.deepcopy(self.wait)
+            print(f'\n<------ time = {time} ------->')
+            print(f'Current: {self.currentProcess}')
+            column = []
             
-            # Excecution Zone
-            if currentWait:
-                print(f'currentWait: {currentWait}')
+            #setting of the col waitqueue
+            for waiting in self.wait:
+                if waiting.arrival == time:
+                    waitQueue.append(waiting)
+                    self.wait = self.rotateWait()
+                    
+
+            # Appending of process in excecution
+            if self.currentProcess is None:
+                column.append(('0', 0))
             else:
-                end = True
-    
+                column.append((self.currentProcess.name, self.currentProcess.remaining_time))
 
-            col.append(self.currentProcess)
-            # Wait queue Zone
-            col.append(currentWait)
+            # Appending of current waiting queue
+            column.append([(p.name, p.remaining_time) for p in copy.deepcopy(waitQueue)])
 
-            # Column appending Zone
-            df.append(col)
-            print('<=========================>')
+            # Appending of column i in df
+            df.append(column)
+
+            # End of time i
+            print(f'<------------------------------>')
             time += 1
 
+            # Executing process if exists and checking if its done
+            if self.currentProcess is not None and not self.currentProcess.done:
+                self.checkFinish(self.currentProcess)
+                self.currentProcess.remaining_time -= 1
+                print(f'Process {self.currentProcess.name} executed: {self.currentProcess.remaining_time}')
+                if self.currentProcess.done:
+                    print(f'Process {self.currentProcess.name} done: {self.currentProcess.done}')
+                    self.currentProcess = None
 
-            if self.currentProcess[1] == 1 and end:
+            # If process awaiting and no current process, from waiting queue to execution queue
+            if waitQueue and self.currentProcess is None:
+                self.currentProcess = waitQueue.pop(0)
+                print(f'Current changed to: {self.currentProcess.name} remaining: {self.currentProcess.remaining_time}')
+
+            # Checking if all process are done
+            if self.isProcessingDone():
+                print('------------------------------------------------------------')
+                print(f'\nProcessing with {method["name"]} done')
+                print(f'data before restart:\n {self.data}')
+                self.restart()
+                print(f'data after restart:\n {self.data}')
+                print('------------------------------------------------------------')
                 break
-            
+
         return df
 
     
@@ -214,6 +244,10 @@ class ProcessManagement:
                 break
             
         return df
+
+
+    def RoudRobin(self, quantum: int = 1, ctxt: int = 1):
+        pass
 
     def SRT(self, ctxt: int = 0):  # Shortest Remaining Time
         df = []
