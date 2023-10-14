@@ -2,19 +2,28 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react';
 import Diagram from './Diagrama';
+const links = {
+    'FCFS': 'https://www.youtube.com/watch?v=IEYNxrx7D-E',
+    'SJF': 'https://www.youtube.com/watch?v=MNDFr4ORHbM',
+    'RR': 'https://www.youtube.com/watch?v=j916osrotfM',
+    'PRIO_gt': 'https://www.youtube.com/watch?v=k92om0dSejs',
+    'PRIO_sm': 'https://www.youtube.com/watch?v=k92om0dSejs',
+    'SRT': "https://www.youtube.com/watch?v=5znMs3a9BOg"
+}
 
 function ProcessForm() {
     const [diagram, setDiagram] = useState(null);
     const [times, setTimes] = useState(null);
     const [method, setMethod] = useState('FCFS');
-    const [cuantum, setCuantum] = useState(0);
-    useEffect(()=>{
-        console.log("USE EFFECT:",diagram);
-    },[diagram])
+    const [cuantum, setCuantum] = useState('');
+    const [context, setContex] = useState('');
+    useEffect(() => {
+        console.log("USE EFFECT:", diagram);
+    }, [diagram])
     const getGantt = async () => {
-        
-        try{
-            
+
+        try {
+
             await axios.get('http://localhost:8000/api/process')
                 .then(res => {
                     console.log('============ Response form GET ===============');
@@ -30,9 +39,9 @@ function ProcessForm() {
         } catch (error) {
             console.log('Error: ', error)
         }
-        
+
     }
-      
+
 
     // State to store the list of processes
     const [processes, setProcesses] = useState([]);
@@ -71,10 +80,13 @@ function ProcessForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // minimum one elemento must be entered
-        if (processes.length == 0)
-            {console.error('Why are you trying to send an empty form ? xd')
-            return}
-        let request = {"data":processes, "method":method};
+        if (processes.length == 0) {
+            console.error('Why are you trying to send an empty form ? xd')
+            return
+        }
+        let request = { "data": processes, "method": method, "quantum": cuantum, "ctxt": context };
+        if (cuantum === "") request['quantum'] = 0
+        if (context === "") request['ctxt'] = 0
         // Send the processes data to the API
         try {
             // const dataArray = [
@@ -83,10 +95,10 @@ function ProcessForm() {
             //     // Add more data objects as needed
             // ];
             await axios.post('http://localhost:8000/api/process', request, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
                 .then(res => {
                     console.log(res.data);
                     console.log('Todo bien con el POST')
@@ -109,7 +121,7 @@ function ProcessForm() {
     };
     const handleM = (event) => {
         setMethod(event.target.value);
-      };
+    };
 
     return (
         <div className=''>
@@ -180,29 +192,53 @@ function ProcessForm() {
                         </tbody>
                     </table>
                 </div>
-                
-                {processes.length != 0 && 
-                <div className="flex justify-center items-center h-full m-3">
-                    <select value={method} onChange={handleM} className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5' name="select">
-                        <option value="FCFS">FCFS</option>
-                        <option value="RR" >RR</option>
-                        <option value="PRIO" >PRIO</option>
-                        <option value="SJF" >SJF</option>
-                        <option value="SRT" >SRT</option>
-                    </select>
-                    {method =="RR" &&<input
-                        type="number"
-                        min={0}
-                        name="cuantum"
-                        placeholder="cuantum"
-                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5 mx-3 w-24'
-                    />
 
-}
-                    <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded m-3 p-2' type="submit">Generar Diagrama</button>
-                </div>}
+                {processes.length != 0 &&
+                    <div className="flex justify-center items-center h-full m-3">
+                        <select value={method} onChange={handleM} className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5' name="select">
+                            <option value="FCFS">FCFS</option>
+                            <option value="RR" >RR</option>
+                            <option value="PRIO_sm" >PRIO Asendente</option>
+                            <option value="PRIO_gt" >PRIO Desendente</option>
+                            <option value="SJF" >SJF</option>
+                            <option value="SRT" >SRT</option>
+                        </select>
+                        {method == "RR" &&
+                            <div>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    name="cuantum"
+                                    value={cuantum}
+                                    onChange={(e) => setCuantum(e.target.value)}
+                                    placeholder="cuantum"
+                                    className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5 mx-3 w-24'
+                                />
+                                <input
+                                    type="number"
+                                    min={0}
+                                    name="context"
+                                    value={context}
+                                    onChange={(e) => setContex(e.target.value)}
+                                    placeholder="Context"
+                                    className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5 mx-3 w-24'
+                                />
+
+                            </div>
+
+
+
+                        }
+                        <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded m-3 p-2' type="submit">Generar Diagrama</button>
+                        <a href={links[method]} target='_blank'>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" className="w-6 h-6">
+                                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                            </svg>
+
+                        </a>
+                    </div>}
             </form>
-            {diagram && <Diagram diagram={diagram} times={times}/>}
+            {diagram && <Diagram diagram={diagram} times={times} />}
 
         </div>
     );

@@ -60,13 +60,16 @@ def get_all_process():
 
 @app.post('/api/process')
 def create_process_array(pList: ProcessData):
-    print(f'Incoming data: {pList}')
+    # print(f'Incoming data: {pList}')
 
     try:
-        print(f'request: {pList}')
+        # print(f'request: {pList}')
 
         Gantt.data = pList.data
         Gantt.method = pList.method
+        if pList.method == 'RR':
+            Gantt.quantum = pList.quantum
+            Gantt.ctxt = pList.ctxt
         print(f'Gantt data: {Gantt.data}')
         return f'success, data:{pList}'
     except ValidationError as e:

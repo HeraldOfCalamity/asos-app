@@ -20,8 +20,8 @@ function App() {
         />
       </div> }
 
-      <div className="flex flex-col mx-3 border border-red-500">
-        <h1 className='mx-auto text-center text-4xl text-white font-bold border mb-7 m-5'>
+      <div className="flex flex-col mx-3  border-red-500">
+        <h1 className='mx-auto text-center text-4xl text-white font-bold  my-14 m-5'>
           GESTIÓN DE PROCESOS
         </h1>
         <ProcessForm />
