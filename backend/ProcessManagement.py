@@ -27,7 +27,7 @@ class ProcessManagement:
         elif self.method == 'SJF':
             solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.cpu_time})
         elif self.method == 'SRT':
-            solution = self.SRT()
+            solution = self.baseAlgorithm({'name':self.method, 'ord':lambda process: process.arrival})
         else:
             solution = [f'-- Error: method {self.method} does not exist --']
         
@@ -85,7 +85,7 @@ class ProcessManagement:
             # if time == 0 and (method['name'][0:4] == 'PRIO' or method['name'] == 'SJF'):
             #     waitQueue = self.data
 
-            if method['name'] == 'FCFS':
+            if method['name'] == 'FCFS' or method['name'] == 'SRT':
                 for waiting in self.wait:
                     if waiting.arrival == time:
                         waitQueue.append(waiting)
@@ -94,10 +94,6 @@ class ProcessManagement:
             elif method['name'][0:4] == 'PRIO' or method['name'] == 'SJF':
                 waitQueue = self.wait
 
-
-
-
-                    
 
             # Appending of process in excecution
             if self.currentProcess is None:
@@ -118,11 +114,24 @@ class ProcessManagement:
             # Executing process if exists and checking if its done
             if self.currentProcess is not None and not self.currentProcess.done:
                 self.checkFinish(self.currentProcess)
-                self.currentProcess.remaining_time -= 1
-                print(f'Process {self.currentProcess.name} executed: {self.currentProcess.remaining_time}')
-                if self.currentProcess.done:
-                    print(f'Process {self.currentProcess.name} done: {self.currentProcess.done}')
-                    self.currentProcess = None
+                if method['name'] == 'SRT':
+                    if waitQueue:
+                        
+                        waitQueue = sorted(waitQueue, key=lambda process: process.remaining_time)
+                        print(f'SRT: currentProcess ({self.currentProcess.name}, {self.currentProcess.remaining_time}) next: ({waitQueue[0].name}, {waitQueue[0].remaining_time})')
+                        if self.currentProcess.remaining_time > waitQueue[0].remaining_time:
+                            self.currentProcess.remaining_time -= 1
+                            waitQueue.append(self.currentProcess)
+                            self.currentProcess = None
+                            print(f'waitqueue: {waitQueue}')
+
+                if self.currentProcess is not None:
+                    self.currentProcess.remaining_time -= 1
+                    print(f'Process {self.currentProcess.name} executed: {self.currentProcess.remaining_time}')
+
+                    if self.currentProcess.done:
+                        print(f'Process {self.currentProcess.name} done: {self.currentProcess.done}')
+                        self.currentProcess = None
 
             # If process awaiting and no current process, from waiting queue to execution queue
             if waitQueue and self.currentProcess is None:
@@ -139,131 +148,6 @@ class ProcessManagement:
                 print('------------------------------------------------------------')
                 break
 
-        return df
-
-    
-
-    def byPriority(self, ord: str="SMALLEST"):
-        # Create a key function to sort by priority
-        key_function = lambda process: process.priority
-
-        if ord == "GREATEST":
-            reverse = True
-        elif ord == "SMALLEST":
-            reverse = False
-        else:
-            raise ValueError("Invalid value for 'ord'. Use 'SMALLEST' or 'GREATEST'.")
-
-        # Sort the data based on priority
-        sorted_data = sorted(self.data, key=key_function, reverse=reverse)
-
-        # Create a list of tuples (name, remaining_time)
-        self.wait = [(process.name, process.remaining_time) for process in sorted_data]
-
-        
-
-
-        
-
-
-    def Priority(self, ctxt: int = 0, ord:str = 'SMALLEST'):
-        df = []
-        time = 0
-        end = False
-
-        while True:
-            print(f'<=========================>\n - Time: {time} -')
-            col = []
-
-            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
-                self.currentProcess = self.wait.pop(0)
-            elif self.currentProcess[1] > 1:
-                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
-
-            if time == 0:
-                self.byPriority(ord)
-
-            print(f'currentProcess: {self.currentProcess}')
-  
-            currentWait = copy.deepcopy(self.wait)
-            
-            # Excecution Zone
-            if currentWait:
-                print(f'currentWait: {currentWait}')
-            else:
-                end = True
-    
-
-            col.append(self.currentProcess)
-            # Wait queue Zone
-            col.append(currentWait)
-
-            # Column appending Zone
-            df.append(col)
-            print('<=========================>')
-            time += 1
-
-
-            if self.currentProcess[1] == 1 and end or time == 10:
-                break
-            
-        return df
-
-
-
-    def byCPUTime(self):
-        # Create a key function to sort by CPU time
-        key_function = lambda process: process.cpu_time
-
-        # Sort the data based on CPU time in ascending order
-        sorted_data = sorted(self.data, key=key_function)
-
-        # Create a list of tuples (name, remaining_time)
-        self.wait = [(process.name, process.remaining_time) for process in sorted_data]
-
-
-
-    def SJF(self, ctxt: int = 0):  # Shortest Job First
-        df = []
-        time = 0
-        end = False
-
-        while True:
-            print(f'<=========================>\n - Time: {time} -')
-            col = []
-
-            if self.wait and (self.currentProcess[1] == 1 or self.currentProcess[1] == 0):
-                self.currentProcess = self.wait.pop(0)
-            elif self.currentProcess[1] > 1:
-                self.currentProcess = (self.currentProcess[0], self.currentProcess[1] - 1)
-
-            if time == 0:
-                self.byCPUTime()
-
-            print(f'currentProcess: {self.currentProcess}')
-  
-            currentWait = copy.deepcopy(self.wait)
-            
-            # Excecution Zone
-            if currentWait:
-                print(f'currentWait: {currentWait}')
-            else:
-                end = True
-    
-
-            col.append(self.currentProcess)
-            # Wait queue Zone
-            col.append(currentWait)
-
-            # Column appending Zone
-            df.append(col)
-            print('<=========================>')
-            time += 1
-
-
-            if self.currentProcess[1] == 1 and end:
-                break
-            
         return df
 
 
