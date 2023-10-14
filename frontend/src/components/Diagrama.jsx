@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 const xd = {
     "0": {
         "0": ["A", 1.0],
@@ -102,10 +102,15 @@ const t = {
     },
 
 }
-function Diagram() {
-    const [data, setData] = useState(xd)
+function Diagram(props) {
+    const [data, setData] = useState(props.diagram)
+    const [times, setTimes] = useState(props.times)
 
-    const [times, setTimes] = useState(t)
+    useEffect(()=>{
+        setData(props.diagram);
+        setTimes(props.times)
+
+    },[props.diagram,props.times])
 
     return (
         <div className='my-10'>
@@ -116,26 +121,26 @@ function Diagram() {
                 <table className="w-full text-sm text-center text-gray-500 dark:text-gray-400" >
                     <tbody className="font-medium text-lg divide-y divide-gray-200 dark:divide-gray-700">
                         {data && Object.keys(data).map((process) => (
-                            process == '0' &&
+                            process == 0 &&
                             <tr >
                                 {Object.keys(data[process]).map((colunm) => (
 
                                     <td className="p-3">
-                                        <h4>
+                                        {data[process][colunm]&&<h4>
                                             {data[process][colunm][0]}
                                             <sub>{data[process][colunm][1]}</sub>
-                                        </h4>
+                                        </h4>}
                                     </td>
 
                                 ))}
                             </tr>
                         ))}
                         {data && Object.keys(data).map((process) => (
-                            process == '1' &&
-                            <tr >
-                                {Object.keys(data['0']).map((index) => (
+                            process == 1 &&
+                            <tr className=" bg-gray-50 dark:bg-gray-700">
+                                {Object.keys(data[0]).map((index) => (
 
-                                    <td className="p-3 ">
+                                    <td className="p-2">
                                         {index}
                                     </td>
 
@@ -143,15 +148,15 @@ function Diagram() {
                             </tr>
                         ))}
                         {data && Object.keys(data).map((process) => (
-                            process != '0' &&
+                            process != 0 &&
                             <tr >
                                 {Object.keys(data[process]).map((colunm) => (
 
                                     <td className="p-3">
-                                        <h4>
+                                        {data[process][colunm]&&<h4>
                                             {data[process][colunm][0]}
                                             <sub>{data[process][colunm][1]}</sub>
-                                        </h4>
+                                        </h4>}
                                     </td>
 
                                 ))}
@@ -185,9 +190,9 @@ function Diagram() {
                                 {Object.keys(times[process]).map((colunm) => (
 
                                     <td className="p-3">
-                                        <h4>
+                                        {times[process][colunm] && <h4>
                                             {times[process][colunm][1]}
-                                        </h4>
+                                        </h4>}
                                     </td>
 
                                 ))}

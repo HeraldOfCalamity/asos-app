@@ -1,13 +1,18 @@
 from fastapi import FastAPI, HTTPException
 from Process import ProcessItem
-from typing import List
+from typing import List, Dict
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 from ProcessManagement import ProcessManagement
+from Data import ProcessData
 
 app = FastAPI()
 
 origins = [ 'http://localhost:5173' ]
+
+
+Gantt = ProcessManagement(None, None)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,7 +22,6 @@ app.add_middleware(
     allow_headers = ['*']
 )
 
-
 @app.get('/')
 def read_root():
     return {'message': 'Everything ok!'}
@@ -25,30 +29,46 @@ def read_root():
 
 @app.get('/api/process')
 def get_all_process():
-    data = [
-        ProcessItem(**{'name':'A','cpu_time':4,'arrival':0, 'priority':0}),
-        ProcessItem(**{'name':'B','cpu_time':3,'arrival':2, 'priority':3}),
-        ProcessItem(**{'name':'C','cpu_time':2,'arrival':2, 'priority':2}),
-    ]
+    # data = [
+    #     ProcessItem(**{'name':'A','cpu_time':10,'arrival':8, 'priority':9}),
+    #     ProcessItem(**{'name':'B','cpu_time':1,'arrival':5, 'priority':2}),
+    #     ProcessItem(**{'name':'C','cpu_time':6,'arrival':4, 'priority':5}),
+    #     ProcessItem(**{'name':'D','cpu_time':7,'arrival':12, 'priority':3}),
+    #     ProcessItem(**{'name':'E','cpu_time':12,'arrival':25, 'priority':1}),
+    # ]
 
     # data = []
     # for item in incoming:
     #     data.append(ProcessItem(**item))
-
     
-    sol = ProcessManagement(data, 'SJF')
-    a = sol.generateGantt()
-    print(f'------------------------------------------------ Response ------------------------------------------------\n{a}')
-    # print(a)
     
-    # print(sol.data)
-    return a
+    print(f'GET: Gantt data: {Gantt.data}')
+    try:
+        if Gantt is not None:
+            response = Gantt.generateGantt()
+        else:
+            response = 'Gantt not created'
+        # print(f'request: {pList}'
+        
+        print(f'------------------------------------------------ Response ------------------------------------------------\n{response}')
+        
+        print(f'success, time:{Gantt.time_df}')
+        return [response,Gantt.time_df]
+    except ValidationError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    
 
 @app.post('/api/process')
-def create_process_array(pList: List[ProcessItem]):
+def create_process_array(pList: ProcessData):
+    print(f'Incoming data: {pList}')
+
     try:
         print(f'request: {pList}')
-        response = pList
-        return f'success, data:{response}'
+
+        Gantt.data = pList.data
+        Gantt.method = pList.method
+        print(f'Gantt data: {Gantt.data}')
+        return f'success, data:{pList}'
     except ValidationError as e:
+        print(f'error: {pList}')
         raise HTTPException(status_code=422, detail=str(e))

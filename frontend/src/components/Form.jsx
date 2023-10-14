@@ -1,8 +1,39 @@
 // ProcessForm.js
 import axios from 'axios'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Diagram from './Diagrama';
 
 function ProcessForm() {
+    const [diagram, setDiagram] = useState(null);
+    const [times, setTimes] = useState(null);
+    const [method, setMethod] = useState('FCFS');
+    const [cuantum, setCuantum] = useState(0);
+    useEffect(()=>{
+        console.log("USE EFFECT:",diagram);
+    },[diagram])
+    const getGantt = async () => {
+        
+        try{
+            
+            await axios.get('http://localhost:8000/api/process')
+                .then(res => {
+                    console.log('============ Response form GET ===============');
+                    console.log(res.data);
+                    setDiagram(JSON.parse(res.data[0]))
+                    setTimes(JSON.parse(res.data[1]))
+                    console.log(JSON.parse(res.data[1]));
+                    console.log(res.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+        
+    }
+      
+
     // State to store the list of processes
     const [processes, setProcesses] = useState([]);
     // State to store form input values
@@ -12,6 +43,7 @@ function ProcessForm() {
         arrival: '',
         priority: '',
     });
+
 
     const addProcess = () => {
         if (
@@ -40,9 +72,9 @@ function ProcessForm() {
         e.preventDefault();
         // minimum one elemento must be entered
         if (processes.length == 0)
-            console.error('Why are you trying to send an empty form ? xd')
-        return
-
+            {console.error('Why are you trying to send an empty form ? xd')
+            return}
+        let request = {"data":processes, "method":method};
         // Send the processes data to the API
         try {
             // const dataArray = [
@@ -50,13 +82,15 @@ function ProcessForm() {
             //     { name: "Process 2", cpu_time: 8, arrival: 3, priority: 1 },
             //     // Add more data objects as needed
             // ];
-            await axios.post('http://localhost:8000/api/process', processes, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
+            await axios.post('http://localhost:8000/api/process', request, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
                 .then(res => {
                     console.log(res.data);
+                    console.log('Todo bien con el POST')
+                    getGantt()
                 })
                 .catch(error => {
                     console.log(error);
@@ -73,6 +107,9 @@ function ProcessForm() {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    const handleM = (event) => {
+        setMethod(event.target.value);
+      };
 
     return (
         <div className=''>
@@ -143,17 +180,30 @@ function ProcessForm() {
                         </tbody>
                     </table>
                 </div>
-                {processes.length != 0 && <div className="flex justify-center items-center h-full m-3">
-                    <select className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5' name="select">
-                        <option value="FCFS" selected>FCFS</option>
+                
+                {processes.length != 0 && 
+                <div className="flex justify-center items-center h-full m-3">
+                    <select value={method} onChange={handleM} className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5' name="select">
+                        <option value="FCFS">FCFS</option>
                         <option value="RR" >RR</option>
-                        <option value="PRIORIDAD" >PRIORIDAD</option>
+                        <option value="PRIO" >PRIO</option>
                         <option value="SJF" >SJF</option>
                         <option value="SRT" >SRT</option>
                     </select>
+                    {method =="RR" &&<input
+                        type="number"
+                        min={0}
+                        name="cuantum"
+                        placeholder="cuantum"
+                        className='border rounded border-indigo-400 bg-indigo-200 placeholder-indigo-400 p-1.5 mx-3 w-24'
+                    />
+
+}
                     <button className='bg-blue-600 border border-blue-600 hover:bg-blue-600 text-white rounded m-3 p-2' type="submit">Generar Diagrama</button>
                 </div>}
             </form>
+            {diagram && <Diagram diagram={diagram} times={times}/>}
+
         </div>
     );
 }

@@ -3,6 +3,7 @@ from typing import List
 from Process import ProcessItem
 import copy
 import pandas as pd
+import json
 
 class ProcessManagement:
     def __init__(self, data: List[ProcessItem], method: str) -> None:
@@ -31,6 +32,7 @@ class ProcessManagement:
         elif self.method == 'SRT':
             solution = self.SRT()
         
+        print(solution)
         return self.toDataFrame(solution)
         
 
@@ -46,10 +48,16 @@ class ProcessManagement:
                 self.wait.append((process.name, process.remaining_time))
         
                 
-    
+    def total_time(self):
+        total = 0
+        for process in self.data:
+            total += process.cpu_time
+        return total
+
 
 
     def FCFS(self, ctxt: int = 0) -> list:   # First Come First Serve
+        total = self.total_time()
         df = []
         time = 0
         end = False
@@ -71,7 +79,8 @@ class ProcessManagement:
             currentWait = copy.deepcopy(self.wait)
             
             # Excecution Zone
-            if currentWait:
+            if len(currentWait):
+                end =False
                 print(f'currentWait: {currentWait}')
             else:
                 end = True
@@ -87,7 +96,7 @@ class ProcessManagement:
             time += 1
 
 
-            if self.currentProcess[1] == 1 and end:
+            if self.currentProcess[1] == 1 and end and total<time:
                 break
             
         return df
@@ -222,8 +231,10 @@ class ProcessManagement:
     def toDataFrame(self, l):
         d = {}
         for i in range(len(l)):
-            d[str(i)]=pd.Series(l[i])
-
+            aux = l[i][1]
+            aux.insert(0,l[i][0])
+            
+            d[str(i)]=pd.Series(aux)
         df = pd.DataFrame(d)
 
         self.time_df= self.CreateDataTimes(df)
@@ -242,36 +253,50 @@ class ProcessManagement:
 
     def TimeReturn(self, df):
         time_return={}
-
+        time_0 = True
         for col in df:
             for fila in df[col]:
-                if not pd.isna(fila):
+                
+                if not pd.isna(fila) :
                     for process in self.data:
+                        
                         if str(fila[0])==process.name:
-                            if not str(fila[0]) in time_return:
-                                time_return[fila[0]]=1
+                            if not str(fila[0]) in time_return and time_0:
+                                time_return[fila[0]] = 0
+                            elif not str(fila[0]) in time_return and time_0!=True:
+                                time_return[fila[0]] = 1
                             else:
-                                time_return[fila[0]]+=1
+                                time_return[fila[0]] += 1
+
+            time_0 = False
+               
                                 
         time_tuplas=[]               
         for process in time_return:
             time_tuplas.append((process,time_return[process]))
+        time_tuplas.append(("PROMEDIO",self.mean(time_return)))
 
         return time_tuplas 
 
     def TimeWait(self, df):
         time_wait = {}
         aux = df[1:]
+        time_0 = True
+            
         for col in aux:
+                
             for fila in aux[col]:
                 if not pd.isna(fila):
-                    for process in range(len(self.data)):
-                        if fila[0]==self.data[process]["name"]:
-                            if not str(fila[0]) in time_wait:
+                    for process in self.data:
+                        if str(fila[0])==process.name:
+                            if not str(fila[0]) in time_wait and time_0:
+                                time_wait[fila[0]] = 0
+                            elif not str(fila[0]) in time_wait and time_0!=True:
                                 time_wait[fila[0]] = 1
                             else:
                                 time_wait[fila[0]] += 1
-                            
+
+            time_0 = False                          
         time_tuplas=[]               
         for process in time_wait:
             time_tuplas.append((process,time_wait[process]))

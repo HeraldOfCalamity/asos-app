@@ -27,7 +27,7 @@ function App() {
         <ProcessForm />
 
 
-        <Diagram />
+        
       </div>
 
     </main>
